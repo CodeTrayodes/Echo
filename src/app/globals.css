@@ -1,26 +1,195 @@
-@import "tailwindcss";
+/* src/app/globals.css - Dimension-inspired Design System */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-tertiary: #16213e;
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f97316 100%);
+  --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-subtle: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 50%, rgba(249, 115, 22, 0.1) 100%);
+  --border-primary: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(139, 92, 246, 0.3);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.4);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Glass effects */
+.glass {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-primary);
+}
+
+.glass-card {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(26, 26, 46, 0.4);
+  border: 1px solid var(--border-primary);
+}
+
+/* Button System */
+.btn {
+  @apply inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:ring-offset-2 focus:ring-offset-gray-900;
+}
+
+.btn-primary {
+  @apply btn px-4 py-2 text-white;
+  background: var(--gradient-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+.btn-primary:hover {
+  @apply transform -translate-y-0.5;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.btn-secondary {
+  @apply btn px-4 py-2 text-white/80 hover:text-white border border-white/10 hover:border-white/20;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.btn-ghost {
+  @apply btn px-3 py-1.5 text-white/60 hover:text-white hover:bg-white/5;
+}
+
+/* Input System */
+.input {
+  @apply block w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg;
+  @apply focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40;
+  @apply placeholder-white/40;
+}
+
+/* Card System */
+.card {
+  @apply glass-card rounded-xl;
+}
+
+.card-interactive {
+  @apply card transition-all duration-200 hover:border-white/20 cursor-pointer;
+}
+
+.card-interactive:hover {
+  background: rgba(26, 26, 46, 0.6);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Status indicators */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-live {
+  @apply bg-red-500;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+  animation: pulse 2s infinite;
+}
+
+.status-ready {
+  @apply bg-green-500;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+.status-waiting {
+  @apply bg-yellow-500;
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.5);
+}
+
+/* Progress */
+.progress-container {
+  @apply h-1 bg-white/5 rounded-full overflow-hidden;
+}
+
+.progress-bar {
+  @apply h-full rounded-full transition-all duration-500;
+  background: var(--gradient-primary);
+}
+
+/* Typography */
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    font-size: 13px;
+  }
+  
+  .btn {
+    @apply px-3 py-1.5 text-xs;
+  }
 }

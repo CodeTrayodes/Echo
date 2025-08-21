@@ -1,4 +1,4 @@
-/ src/app/api/submit-interview/route.js (Updated)
+// src/app/api/submit-interview/route.js (Updated)
 import { NextResponse } from "next/server";
 import { getInterviewReport } from "@/lib/openai";
 

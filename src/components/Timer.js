@@ -1,23 +1,50 @@
+// src/components/Timer.js - FIXED: Accurate timing
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function Timer({ running = false, duration = 180, onEnd }) {
   const [timeLeft, setTimeLeft] = useState(duration);
-  
-  useEffect(() => { 
-    if (!running) return; 
-    setTimeLeft(duration); 
+  const intervalRef = useRef(null);
+  const startTimeRef = useRef(null);
+
+  // Reset timer when running starts
+  useEffect(() => {
+    if (running) {
+      setTimeLeft(duration);
+      startTimeRef.current = Date.now();
+    }
   }, [running, duration]);
 
+  // FIXED: Use actual time elapsed instead of simple countdown
   useEffect(() => {
-    if (!running) return;
-    if (timeLeft <= 0) { 
-      onEnd?.(); 
-      return; 
+    if (!running) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
     }
-    const id = setInterval(() => setTimeLeft(t => t - 1), 1000);
-    return () => clearInterval(id);
-  }, [running, timeLeft, onEnd]);
+
+    intervalRef.current = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      const remaining = Math.max(0, duration - elapsed);
+      
+      setTimeLeft(remaining);
+      
+      if (remaining === 0) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        onEnd?.();
+      }
+    }, 100); // Update every 100ms for smooth countdown
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [running, duration, onEnd]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;

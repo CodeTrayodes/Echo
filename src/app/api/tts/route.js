@@ -5,21 +5,31 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req) {
   try {
-    const { text } = await req.json();
+    const { text, speed } = await req.json();
 
-    const response = await client.audio.speech.create({
-      model: "tts-1",
-      voice: "alloy", // Professional British-sounding voice
+    // Preferred: cheaper + great quality
+    const tryModel = async (voice) => client.audio.speech.create({
+      model: "gpt-4o-mini-tts",
+      voice,                 // "nova" preferred; falls back to "alloy"
       input: text,
-      speed: 1.0, // Normal pace (fixed from slow)
+      speed: typeof speed === "number" ? speed : 1, // a touch slower, human pace
+      format: "mp3",
     });
+
+    let response;
+    try {
+      response = await tryModel("nova");   // friendly “nova” voice
+    } catch (e) {
+      console.warn("TTS with 'nova' failed, falling back to 'alloy':", e?.message);
+      response = await tryModel("alloy");  // safe fallback
+    }
 
     const arrayBuffer = await response.arrayBuffer();
     return new NextResponse(arrayBuffer, {
-      headers: { 
+      headers: {
         "Content-Type": "audio/mpeg",
-        "Cache-Control": "public, max-age=1800" // 30 min cache
-      },
+        "Cache-Control": "public, max-age=1800"
+      }
     });
   } catch (error) {
     console.error("TTS error:", error);
